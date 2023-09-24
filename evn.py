@@ -2,8 +2,9 @@ import requests
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 import time
-token = "11111111111111111111111111"
-chat_id = "111111111111111111111"
+
+token = "laaaaaaaaaaaaaaaaaaaaaaaa"
+chat_id = "laaaaaaaaaaaaaaaaaaaaaaaa"
 
 # Function to send a message to Telegram
 def send_msg(text):
@@ -12,15 +13,25 @@ def send_msg(text):
     print(results.json())
 
 while True:
+    # Get the current date and time
+    current_datetime = datetime.now()
+
+    # Check if it's a new day (midnight)
+    if current_datetime.hour == 0 and current_datetime.minute == 0:
+        # Reset the loop to check for messages again
+        print("Resetting the loop to check for messages.")
+        time.sleep(60)  # Sleep for 1 minute to avoid constant checks
+        continue
+
     # Create variables for tuNgay and denNgay
-    tuNgay = datetime.now().strftime('%d-%m-%Y')
-    denNgay = (datetime.now() + timedelta(days=6)).strftime('%d-%m-%Y')
+    tuNgay = current_datetime.strftime('%d-%m-%Y')
+    denNgay = (current_datetime + timedelta(days=6)).strftime('%d-%m-%Y')
 
     # Set query parameters
     params = {
         'tuNgay': tuNgay,
         'denNgay': denNgay,
-        'maKH': '1111111111111111111111111111111111111111111111',
+        'maKH': 'laaaaaaaaaaaaaaaaaaaaaaaa',
         'ChucNang': 'MaKhachHang'
     }
 
@@ -44,8 +55,15 @@ while True:
     if "Lý do mất điện" in cleaned_text:
         # Send the cleaned response content to Telegram
         send_msg(cleaned_text)
+        print("Message sent. Pausing the loop until the end of the day.")
+        
+        # Calculate the time until the end of the day (midnight)
+        time_until_midnight = (current_datetime + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0) - current_datetime
+
+        # Sleep until the end of the day
+        time.sleep(time_until_midnight.total_seconds())
     else:
         print("Response does not contain 'Lý do mất điện'. Message not sent.")
-
-    # Sleep for 2 hours (7200 seconds) before running the loop again
+        send_msg("Still Work")
+    # Sleep for 2 hours (7200 seconds) before checking again
     time.sleep(7200)
